@@ -1,20 +1,21 @@
 class Solution:
-    
     def subsets(self, nums):
-    
-        size = len(nums)
-        upper_bound = 1 << size 
+        res = []
         
-        all_subset = [ ]
-        for bits_sn in range(upper_bound):
+        subset = []
+
+        def dfs(i):
+            if i >= len(nums):
+                res.append(subset.copy())
+                return
             
-            cur_subset = []
+            # decision to include nums[i] 
+            subset.append(nums[i])
+            dfs(i+1)
             
-            for i in range(size):
-                
-                if bits_sn & (1 << i) != 0:
-                    cur_subset.append( nums[i] )
-            
-            all_subset.append( cur_subset )
+            # decision NOT to include nums[i]
+            subset.pop()
+            dfs(i+1)
         
-        return all_subset
+        dfs(0)
+        return res
