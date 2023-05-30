@@ -1,0 +1,27 @@
+name: Merge Branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      branches:
+        description: '머지할 브랜치를 쉼표로 구분하여 입력하세요.'
+        required: true
+
+jobs:
+  merge_branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Merge branches
+        run: |
+          git config --global user.name "kwonhygge"
+          git config --global user.email "cleancode.kwon@gmail.com"
+          git checkout target-branch
+          IFS=',' read -ra branches <<< "${{ github.event.inputs.branches }}"
+          for branch in "${branches[@]}"; do
+            git merge --no-ff $branch
+          done
+          git push origin target-branch
