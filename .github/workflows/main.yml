@@ -6,6 +6,9 @@ on:
       branches:
         description: '머지할 브랜치를 쉼표로 구분하여 입력하세요.'
         required: true
+      target_branch:
+        description: '타겟 브랜치를 입력하세요.'
+        required: true
 
 jobs:
   merge_branches:
@@ -15,18 +18,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set Git Config
+        run: |
+          git config --global user.name "${{ secrets.GITHUB_USER }}"
+          git config --global user.email "${{ secrets.GITHUB_EMAIL }}"
+
       - name: Create target branch
         run: |
-          git config --global user.name "Your-GitHub-Username"
-          git config --global user.email "Your-GitHub-Email"
-          git checkout -b target-branch develop
-          git push -u origin target-branch
+          git checkout -b ${{ github.event.inputs.target_branch }} develop
+          git push -u origin ${{ github.event.inputs.target_branch }}
 
       - name: Merge branches
         run: |
-          git checkout target-branch
+          git checkout ${{ github.event.inputs.target_branch }}
           IFS=',' read -ra branches <<< "${{ github.event.inputs.branches }}"
           for branch in "${branches[@]}"; do
-            git merge --no-ff $branch
+            git merge --no-ff $branch || exit 1
           done
-          git push origin target-branch
+          git push origin ${{ github.event.inputs.target_branch }}
