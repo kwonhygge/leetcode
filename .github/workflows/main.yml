@@ -15,10 +15,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create target branch
+        run: |
+          git config --global user.name "Your-GitHub-Username"
+          git config --global user.email "Your-GitHub-Email"
+          git checkout -b target-branch develop
+          git push -u origin target-branch
+
       - name: Merge branches
         run: |
-          git config --global user.name "kwonhygge"
-          git config --global user.email "cleancode.kwon@gmail.com"
           git checkout target-branch
           IFS=',' read -ra branches <<< "${{ github.event.inputs.branches }}"
           for branch in "${branches[@]}"; do
