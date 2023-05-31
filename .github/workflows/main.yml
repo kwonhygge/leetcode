@@ -28,6 +28,16 @@ jobs:
           git checkout -b ${{ github.event.inputs.target_branch }} develop
           git push -u origin ${{ github.event.inputs.target_branch }}
 
+      - name: Debug - Show branch information
+        run: |
+          git branch -a
+          git log --oneline --decorate --graph --all
+
+      - name: Debug - Show target branch status
+        run: |
+          git checkout ${{ github.event.inputs.target_branch }}
+          git status
+
       - name: Merge branches
         run: |
           git checkout ${{ github.event.inputs.target_branch }}
